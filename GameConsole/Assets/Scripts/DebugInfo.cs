@@ -16,10 +16,11 @@ public class DebugInfoBase
         infoFormat = format;
     }
 
-    public string GetCommandId() { return infoId; }
-    public string GetCommandDescription() { return infoDescription; }
-    public string GetCommandFormat() { return infoFormat; }
+    public string GetInfoId() { return infoId; }
+    public string GetInfoDescription() { return infoDescription; }
+    public string GetInfoFormat() { return infoFormat; }
 }
+
 public class DebugInfo<T> : DebugInfoBase
 {
     private Func<T> getter;
@@ -29,19 +30,18 @@ public class DebugInfo<T> : DebugInfoBase
         this.getter = getter;
     }
 
-    public void GetInfo(out T value )
+    public void GetInfo(out T value)
     {
-       value = getter.Invoke();
+        value = getter.Invoke();
     }
 }
 
-
-public class DebugInfo<T,N>: DebugInfoBase where T : N
+public class DebugInfo<T, N> : DebugInfoBase where T : N
 {
     private Func<T> getter1;
     private Func<N> getter2;
 
-    public DebugInfo(string id, string description, string format,Func<T> getter1,Func<N> getter2) : base(id, description, format)
+    public DebugInfo(string id, string description, string format, Func<T> getter1, Func<N> getter2) : base(id, description, format)
     {
         this.getter1 = getter1;
         this.getter2 = getter2;
