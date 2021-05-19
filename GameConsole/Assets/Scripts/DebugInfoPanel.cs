@@ -14,17 +14,19 @@ public class DebugInfoPanel : MonoBehaviour
     private void Awake()
     {
         DebugInfo<int,int> HELP2;
+        DebugInfo<bool> HELP3;
         HELP = new DebugInfo<int>("Prueba", "Prueba con un entero", "Prueba", () =>
         {
             return 1;
         });
         HELP2 = new DebugInfo<int,int>("PruebaDoble", "Prueba con dos enteros", "PruebaDoble", () =>{return 2;},() => { return 27;});
+        HELP3 = new DebugInfo<bool>("Boolean", "Prueba con bool", "Boolean", () => { return true; });
 
         infoList = new List<DebugInfoBase>
         {
             HELP,
             HELP2,
-            HELP,
+            HELP3,
             HELP,
             HELP,
             HELP,
@@ -58,7 +60,18 @@ public class DebugInfoPanel : MonoBehaviour
                 (infoList[i] as DebugInfo<int>).GetInfo(out help);
                 label = $"{label} : {help.ToString()}";
             }
-
+            else if (infoList[i] as DebugInfo<float> != null)
+            {
+                float help;
+                (infoList[i] as DebugInfo<float>).GetInfo(out help);
+                label = $"{label} : {help.ToString()}";
+            }
+            else if (infoList[i] as DebugInfo<bool> != null)
+            {
+                bool help;
+                (infoList[i] as DebugInfo<bool>).GetInfo(out help);
+                label = $"{label} : {help.ToString()}";
+            }
             else if (infoList[i] as DebugInfo<int,int> != null)
             {
                 int help, help2;
