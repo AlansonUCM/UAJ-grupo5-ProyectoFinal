@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class DebugPanel : MonoBehaviour
 {
+    public static DebugPanel Instance;
+
     [SerializeField]
     private DebugConsole console;
 
@@ -11,38 +13,27 @@ public class DebugPanel : MonoBehaviour
 
     public List<DebugInfoBase> infoList;
 
+    public void AddInfo(DebugInfoBase info)
+    {
+        infoList.Add(info);
+    }
+
+    private void Init()
+    {
+        infoList = new List<DebugInfoBase>();
+    }
+
     private void Awake()
     {
-        DebugInfo<int> HELP = new DebugInfo<int>("Prueba", "Prueba con un entero", "Prueba", () =>
+        if (Instance == null)
         {
-            return 1;
-        });
+            Instance = this;
+            Init();
+            DontDestroyOnLoad(gameObject);
+            return;
+        }
 
-        DebugInfo<int, int> HELP2 = new DebugInfo<int, int>("PruebaDoble", "Prueba con dos enteros", "PruebaDoble", () =>
-        {
-            return 2;
-        }, () =>
-        {
-            return 27;
-        });
-
-        DebugInfo<bool> HELP3 = new DebugInfo<bool>("Boolean", "Prueba con bool", "Boolean", () =>
-        {
-            return true;
-        });
-
-        infoList = new List<DebugInfoBase>
-        {
-            HELP,
-            HELP2,
-            HELP3,
-            HELP,
-            HELP2,
-            HELP3,
-            HELP,
-            HELP2,
-            HELP3
-        };
+        Destroy(gameObject);
     }
 
     private void OnGUI()
@@ -57,7 +48,7 @@ public class DebugPanel : MonoBehaviour
 
         for (int i = 0; i < infoList.Count; i++)
         {
-            string label = $"{infoList[i].GetInfoFormat()}";
+            string label = $"{infoList[i].GetInfoId()}";
 
             if (infoList[i] as DebugInfo<int> != null)
             {
@@ -77,6 +68,11 @@ public class DebugPanel : MonoBehaviour
             else if (infoList[i] as DebugInfo<int, int> != null)
             {
                 (infoList[i] as DebugInfo<int, int>).GetInfo(out int help, out int help2);
+                label = $"{label} : {help} , {help2}";
+            }
+            else if (infoList[i] as DebugInfo<float, float> != null)
+            {
+                (infoList[i] as DebugInfo<float, float>).GetInfo(out float help, out float help2);
                 label = $"{label} : {help} , {help2}";
             }
 

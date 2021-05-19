@@ -7,25 +7,22 @@ public class DebugInfoBase
 {
     private string infoId;
     private string infoDescription;
-    private string infoFormat;
 
-    public DebugInfoBase(string id, string description, string format)
+    public DebugInfoBase(string id, string description)
     {
         infoId = id;
         infoDescription = description;
-        infoFormat = format;
     }
 
     public string GetInfoId() { return infoId; }
     public string GetInfoDescription() { return infoDescription; }
-    public string GetInfoFormat() { return infoFormat; }
 }
 
 public class DebugInfo<T> : DebugInfoBase
 {
     private Func<T> getter;
 
-    public DebugInfo(string id, string description, string format, Func<T> getter) : base(id, description, format)
+    public DebugInfo(string id, string description, Func<T> getter) : base(id, description)
     {
         this.getter = getter;
     }
@@ -41,7 +38,7 @@ public class DebugInfo<T, N> : DebugInfoBase where T : N
     private Func<T> getter1;
     private Func<N> getter2;
 
-    public DebugInfo(string id, string description, string format, Func<T> getter1, Func<N> getter2) : base(id, description, format)
+    public DebugInfo(string id, string description, Func<T> getter1, Func<N> getter2) : base(id, description)
     {
         this.getter1 = getter1;
         this.getter2 = getter2;

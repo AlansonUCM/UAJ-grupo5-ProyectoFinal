@@ -50,3 +50,18 @@ public class DebugCommand<T> : DebugCommandBase
         command.Invoke(value);
     }
 }
+
+public class DebugCommand<T, N> : DebugCommandBase
+{
+    private Action<T, N> command;
+
+    public DebugCommand(string id, string description, string format, Action<T, N> command) : base(id, description, format)
+    {
+        this.command = command;
+    }
+
+    public void Invoke(T value1, N value2)
+    {
+        command.Invoke(value1, value2);
+    }
+}
