@@ -218,6 +218,9 @@ GameObject:
   - component: {fileID: 1509685159}
   - component: {fileID: 1509685161}
   - component: {fileID: 1509685162}
+  - component: {fileID: 1509685163}
+  - component: {fileID: 1509685165}
+  - component: {fileID: 1509685164}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -278,6 +281,70 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cube: {fileID: 1952862061}
+  c: 77
+  ok: 1
+  n: 2123
+--- !u!114 &1509685163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1509685158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 038112f918b8d7641958eb16dad102d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: mum
+  format: mum <float>
+  description: 10
+  amountOfParameters: 1
+  script: {fileID: 1509685162}
+  methodName: mum
+  type1: System.Single
+--- !u!114 &1509685164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1509685158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b84b65e2d51f2b4c958f6f4e9eea794, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: Position
+  description: ' Position of the block'
+  amountOfGetter: 2
+  script: {fileID: 1509685162}
+  script2: {fileID: 1509685162}
+  fieldName: 
+  methodName: getPositionX
+  fieldName2: 
+  methodName2: getPositionY
+--- !u!114 &1509685165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1509685158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b84b65e2d51f2b4c958f6f4e9eea794, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: info2
+  description: info2
+  amountOfGetter: 2
+  script: {fileID: 1509685162}
+  script2: {fileID: 1509685162}
+  fieldName: c
+  methodName: 
+  fieldName2: n
+  methodName2: 
 --- !u!1 &1952862061
 GameObject:
   m_ObjectHideFlags: 0
@@ -354,7 +421,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1952862061}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 2.5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

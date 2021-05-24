@@ -5,7 +5,9 @@ using UnityEngine;
 public class Test : MonoBehaviour
 {
     public GameObject cube;
-
+    public char c='M';
+    public bool ok = true;
+    public float n = 2123;
     private void Start()
     {
         DebugCommand<float, float> SPAWN_CUBE = new DebugCommand<float, float>("spawn_cube", "Spawns a cube", "spawn_cube <float, float>", (x, y) =>
@@ -14,13 +16,18 @@ public class Test : MonoBehaviour
         });
         DebugConsole.Instance.AddCommand(SPAWN_CUBE);
 
-        DebugInfo<float, float> CUBE_POSITION = new DebugInfo<float, float>("Cube Position", "Shows the cube's position", () =>
-        {
-            return cube.transform.position.x;
-        }, () =>
-        {
-            return cube.transform.position.y;
-        });
-        DebugPanel.Instance.AddInfo(CUBE_POSITION);
+    }
+
+    public float getPositionX()
+    {
+        return cube.transform.position.x;
+    }
+    public float getPositionY()
+    {
+        return cube.transform.position.y;
+    }
+    public void mum(float x)
+    {
+        cube.transform.position += new Vector3(x, 0, 0);
     }
 }

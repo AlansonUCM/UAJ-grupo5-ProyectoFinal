@@ -60,6 +60,11 @@ public class DebugPanel : MonoBehaviour
                 (infoList[i] as DebugInfo<float>).GetInfo(out float help);
                 label = $"{label} : {help}";
             }
+            else if (infoList[i] as DebugInfo<System.ValueType> != null)
+            {
+                (infoList[i] as DebugInfo<System.ValueType>).GetInfo(out System.ValueType help);
+                label = $"{label} : {help}";
+            }
             else if (infoList[i] as DebugInfo<bool> != null)
             {
                 (infoList[i] as DebugInfo<bool>).GetInfo(out bool help);
@@ -75,8 +80,18 @@ public class DebugPanel : MonoBehaviour
                 (infoList[i] as DebugInfo<float, float>).GetInfo(out float help, out float help2);
                 label = $"{label} : {help} , {help2}";
             }
+            else if (infoList[i] as DebugInfo<bool, bool> != null)
+            {
+                (infoList[i] as DebugInfo<bool, bool>).GetInfo(out bool help, out bool help2);
+                label = $"{label} : {help} , {help2}";
+            }
+            else if (infoList[i] as DebugInfo<System.ValueType,System.ValueType> != null)
+            {
+                (infoList[i] as DebugInfo<System.ValueType,System.ValueType>).GetInfo(out System.ValueType help, out System.ValueType help2);
+                label = $"{label} : {help} , {help2}";
+            }
 
-            Rect labelRect = new Rect(5, Screen.height - 100 + 20 * i, 230 - 100, 20);
+            Rect labelRect = new Rect(5, Screen.height - 100 + 20 * i, 230, 20);
             GUI.Label(labelRect, label);
         }
 

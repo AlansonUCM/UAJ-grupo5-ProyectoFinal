@@ -33,7 +33,7 @@ public class DebugInfo<T> : DebugInfoBase
     }
 }
 
-public class DebugInfo<T, N> : DebugInfoBase where T : N
+public class DebugInfo<T, N> : DebugInfoBase 
 {
     private Func<T> getter1;
     private Func<N> getter2;

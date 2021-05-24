@@ -62,23 +62,48 @@ public class DebugConsole : MonoBehaviour
                 }
                 else if (commandList[i] as DebugCommand<int> != null)
                 {
-                    (commandList[i] as DebugCommand<int>).Invoke(int.Parse(properties[1]));
+                    if (properties.Length > 1)
+                    {
+                        int pars = 0;
+                        if (int.TryParse(properties[1], out pars))
+                            (commandList[i] as DebugCommand<int>).Invoke(int.Parse(properties[1]));
+                    }
                 }
                 else if (commandList[i] as DebugCommand<float> != null)
                 {
-                    (commandList[i] as DebugCommand<float>).Invoke(float.Parse(properties[1]));
+                    if (properties.Length > 1)
+                    {
+                        float pars = 0;
+                        if (float.TryParse(properties[1], out pars))
+                            (commandList[i] as DebugCommand<float>).Invoke(float.Parse(properties[1]));
+                    }
                 }
                 else if (commandList[i] as DebugCommand<bool> != null)
                 {
-                    (commandList[i] as DebugCommand<bool>).Invoke(bool.Parse(properties[1]));
+                    if (properties.Length > 1)
+                    {
+                        bool pars = false;
+                        if (bool.TryParse(properties[1], out pars))
+                            (commandList[i] as DebugCommand<bool>).Invoke(bool.Parse(properties[1]));
+                    }
                 }
                 else if (commandList[i] as DebugCommand<int, int> != null)
                 {
-                    (commandList[i] as DebugCommand<int, int>).Invoke(int.Parse(properties[1]), int.Parse(properties[2]));
+                    if (properties.Length > 2)
+                    {
+                        int pars = 0;
+                        if (int.TryParse(properties[1], out pars) && int.TryParse(properties[2], out pars))
+                            (commandList[i] as DebugCommand<int, int>).Invoke(int.Parse(properties[1]), int.Parse(properties[2]));
+                    }
                 }
                 else if (commandList[i] as DebugCommand<float, float> != null)
                 {
-                    (commandList[i] as DebugCommand<float, float>).Invoke(float.Parse(properties[1]), float.Parse(properties[2]));
+                    if (properties.Length > 2)
+                    {
+                        float pars = 0;
+                        if (float.TryParse(properties[1], out pars) && float.TryParse(properties[2], out pars))
+                            (commandList[i] as DebugCommand<float, float>).Invoke(float.Parse(properties[1]), float.Parse(properties[2]));
+                    }
                 }
             }
         }
