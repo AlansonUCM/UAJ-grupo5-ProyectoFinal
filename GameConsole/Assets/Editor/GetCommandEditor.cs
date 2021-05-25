@@ -20,6 +20,8 @@ public class GetCommandEditor :Editor
     private string format;
     private string description;
     private int elected;
+
+    private MethodInfo[] infos;
     // Start is called before the first frame update
     void OnEnable()
     {
@@ -33,18 +35,8 @@ public class GetCommandEditor :Editor
 
         
         type = serializedObject.FindProperty("type1").stringValue;
-        if (type == typeof(int).ToString())
-        {
-            elected = 0;
-        }
-        else if (type == typeof(float).ToString())
-        {
-            elected = 1;
-        }
-        else if(type == typeof(bool).ToString())
-        {
-            elected = 2;
-        }
+
+  
         names1 = new List<string>(scripts.Length + 1);
         names1.Add("None");
 
@@ -71,7 +63,11 @@ public class GetCommandEditor :Editor
         {
             methodsName1 = ((MonoBehaviour)serializedObject.FindProperty("script").objectReferenceValue).GetType().
                 GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).
-                    Where(m => m.ReturnType == typeof(void)).
+                    Where(m => m.ReturnType == typeof(void) && (m.GetParameters().Length < 0 || (m.GetParameters().Length > 0 &&
+                    (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool)))
+                     || (m.GetParameters().Length > 1 &&
+                     (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool))
+                     && m.GetParameters()[0].ParameterType == m.GetParameters()[1].ParameterType))).
                         Select(m => m.Name + "()").ToList();
 
             selectedMethod = methodsName1.IndexOf(serializedObject.FindProperty("methodName").stringValue + "()");
@@ -101,30 +97,6 @@ public class GetCommandEditor :Editor
 
         EditorGUI.BeginChangeCheck();
 
-
-        amountOfParameters = EditorGUILayout.IntPopup("Amount of parameters ", amountOfParameters, new string[3] { "0","1", "2" }, new int[3] { 0,1, 2 });
-        serializedObject.FindProperty("amountOfParameters").intValue = amountOfParameters;
-        
-        if (amountOfParameters > 0)
-        {
-            elected = EditorGUILayout.IntPopup("Type of parameters ", elected, new string[3] { "int", "float", "bool" }, new int[3] { 0, 1, 2 });
-
-            if(elected==0)
-            {
-                type = typeof(int).ToString();
-            }
-            else if(elected==1)
-            {
-                type = typeof(float).ToString();
-            }
-            else
-            {
-                type = typeof(bool).ToString();
-            }
-            serializedObject.FindProperty("type1").stringValue = type;
-
-        }
-
         EditorGUILayout.Space();
 
         selectedScript1 = EditorGUILayout.Popup("Script", selectedScript1, names1.ToArray());
@@ -144,12 +116,34 @@ public class GetCommandEditor :Editor
             selectedMethod = 0;
 
 
-            // serializedObject.FindProperty("counter").boolValue = false;
-
             methodsName1 = ((MonoBehaviour)serializedObject.FindProperty("script").objectReferenceValue).GetType().
                 GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).
-                    Where(m => m.ReturnType == typeof(void)).
+                    Where(m => m.ReturnType == typeof(void) 
+                    && (m.GetParameters().Length < 0 || (m.GetParameters().Length>0 && 
+                    (m.GetParameters()[0].ParameterType==typeof(int) || m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool)))
+                     || (m.GetParameters().Length > 1 && 
+                     (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool))
+                     && m.GetParameters()[0].ParameterType== m.GetParameters()[1].ParameterType))).
                         Select(m => m.Name + "()").ToList();
+
+            infos = ((MonoBehaviour)serializedObject.FindProperty("script").objectReferenceValue).GetType().
+                GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).
+                    Where(m => m.ReturnType == typeof(void) && (m.GetParameters().Length < 0 || (m.GetParameters().Length > 0 &&
+                    (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool)))
+                     || (m.GetParameters().Length > 1 &&
+                     (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool))
+                     && m.GetParameters()[0].ParameterType == m.GetParameters()[1].ParameterType))).ToArray();
+
+            if (infos.Length > 0)
+            {
+                amountOfParameters = infos[selectedMethod].GetParameters().Length;
+                if (amountOfParameters > 0)
+                {
+                    type = infos[selectedMethod].GetParameters()[0].ParameterType.ToString();
+                    serializedObject.FindProperty("type1").stringValue = type;
+                }
+                serializedObject.FindProperty("amountOfParameters").intValue = amountOfParameters;
+            }
 
             if (methodsName1.Count > 0)
                 ((GetDebugCommand)target).methodName = methodsName1[0];
@@ -165,7 +159,20 @@ public class GetCommandEditor :Editor
         if (EditorGUI.EndChangeCheck())
         {
             if (methodsName1.Count > 0)
+            {
                 serializedObject.FindProperty("methodName").stringValue = methodsName1[selectedMethod].Substring(0, methodsName1[selectedMethod].Length - 2);
+                if (infos.Length > 0)
+                {
+                    amountOfParameters = infos[selectedMethod].GetParameters().Length;
+                    if (amountOfParameters > 0)
+                    {
+                        type = infos[selectedMethod].GetParameters()[0].ParameterType.ToString();
+                        serializedObject.FindProperty("type1").stringValue = type;
+                    }
+                    serializedObject.FindProperty("amountOfParameters").intValue = amountOfParameters;
+                }
+
+            }
         }
         
 

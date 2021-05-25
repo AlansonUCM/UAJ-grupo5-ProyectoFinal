@@ -159,7 +159,6 @@ public class GetInfoEditor : Editor
             }
             else
             {
-               // serializedObject.FindProperty("counter").boolValue = false;
 
                 methodsName1 = ((MonoBehaviour)serializedObject.FindProperty("script").objectReferenceValue).GetType().
                     GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).
@@ -224,12 +223,9 @@ public class GetInfoEditor : Editor
                     if (fieldsName2.Count > 0)
                         ((GetDebugInfo)target).fieldName2 = fieldsName2[selectedField2];
 
-                   // selectedMethod2 = 0;
                 }
                 else
                 {
-                    // serializedObject.FindProperty("counter").boolValue = false;
-
                     methodsName2 = ((MonoBehaviour)serializedObject.FindProperty("script2").objectReferenceValue).GetType().
                         GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).
                             Where(m => m.ReturnType != typeof(void) &&  m.ReturnType.IsValueType).
@@ -239,7 +235,6 @@ public class GetInfoEditor : Editor
                     if (methodsName2.Count > 0)
                         ((GetDebugInfo)target).methodName2 = methodsName2[0];
 
-                   // selectedField2 = 0;
                 }
             }
 

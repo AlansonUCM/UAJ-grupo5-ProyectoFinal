@@ -28,6 +28,6 @@ public class Test : MonoBehaviour
     }
     public void mum(float x)
     {
-        cube.transform.position += new Vector3(x, 0, 0);
+        cube.transform.position += new Vector3(1, 0, 0);
     }
 }
