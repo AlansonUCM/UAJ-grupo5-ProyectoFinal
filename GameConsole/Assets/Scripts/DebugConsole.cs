@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DebugConsole : MonoBehaviour
 {
@@ -64,17 +65,23 @@ public class DebugConsole : MonoBehaviour
                 {
                     if (properties.Length > 1)
                     {
-                        int pars = 0;
-                        if (int.TryParse(properties[1], out pars))
+                        if (int.TryParse(properties[1], out _))
                             (commandList[i] as DebugCommand<int>).Invoke(int.Parse(properties[1]));
+                    }
+                }
+                else if (commandList[i] as DebugCommand<double> != null)
+                {
+                    if (properties.Length > 1)
+                    {
+                        if (double.TryParse(properties[1], out _))
+                            (commandList[i] as DebugCommand<double>).Invoke(double.Parse(properties[1]));
                     }
                 }
                 else if (commandList[i] as DebugCommand<float> != null)
                 {
                     if (properties.Length > 1)
                     {
-                        float pars = 0;
-                        if (float.TryParse(properties[1], out pars))
+                        if (float.TryParse(properties[1], out _))
                             (commandList[i] as DebugCommand<float>).Invoke(float.Parse(properties[1]));
                     }
                 }
@@ -82,8 +89,7 @@ public class DebugConsole : MonoBehaviour
                 {
                     if (properties.Length > 1)
                     {
-                        bool pars = false;
-                        if (bool.TryParse(properties[1], out pars))
+                        if (bool.TryParse(properties[1], out _))
                             (commandList[i] as DebugCommand<bool>).Invoke(bool.Parse(properties[1]));
                     }
                 }
@@ -91,17 +97,23 @@ public class DebugConsole : MonoBehaviour
                 {
                     if (properties.Length > 2)
                     {
-                        int pars = 0;
-                        if (int.TryParse(properties[1], out pars) && int.TryParse(properties[2], out pars))
+                        if (int.TryParse(properties[1], out _) && int.TryParse(properties[2], out _))
                             (commandList[i] as DebugCommand<int, int>).Invoke(int.Parse(properties[1]), int.Parse(properties[2]));
+                    }
+                }
+                else if (commandList[i] as DebugCommand<double, double> != null)
+                {
+                    if (properties.Length > 2)
+                    {
+                        if (double.TryParse(properties[1], out _) && double.TryParse(properties[2], out _))
+                            (commandList[i] as DebugCommand<double, double>).Invoke(double.Parse(properties[1]), double.Parse(properties[2]));
                     }
                 }
                 else if (commandList[i] as DebugCommand<float, float> != null)
                 {
                     if (properties.Length > 2)
                     {
-                        float pars = 0;
-                        if (float.TryParse(properties[1], out pars) && float.TryParse(properties[2], out pars))
+                        if (float.TryParse(properties[1], out _) && float.TryParse(properties[2], out _))
                             (commandList[i] as DebugCommand<float, float>).Invoke(float.Parse(properties[1]), float.Parse(properties[2]));
                     }
                 }
@@ -126,24 +138,30 @@ public class DebugConsole : MonoBehaviour
 
     private void Init()
     {
-        DebugCommand HELP = new DebugCommand("help", "Show a list of all available commands", "help", () =>
+        DebugCommand HELP = new DebugCommand("help", "Shows a list of all available commands.", "help", () =>
         {
             showHelp = true;
             showInfo = false;
             scroll = Vector2.zero;
         });
 
-        DebugCommand INFO = new DebugCommand("info", "Show the description of all the info on the panel", "info", () =>
+        DebugCommand INFO = new DebugCommand("info", "Shows the description of all the information on the panel.", "info", () =>
         {
             showHelp = false;
             showInfo = true;
             scroll = Vector2.zero;
         });
 
+        DebugCommand<int> CHANGE_SCENE = new DebugCommand<int>("change_scene", "Changes the current scene.", "change_scene<int>", (x) =>
+        {
+            if (x >= 0 && x < SceneManager.sceneCountInBuildSettings) SceneManager.LoadScene(x);
+        });
+
         commandList = new List<DebugCommandBase>
         {
             HELP,
-            INFO
+            INFO,
+            CHANGE_SCENE
         };
 
         commandIdList = new List<string>();

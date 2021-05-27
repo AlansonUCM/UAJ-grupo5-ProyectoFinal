@@ -1,81 +1,72 @@
 using UnityEngine;
 using UnityEditor;
 using System;
-using System.Numerics;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 
-
 [CustomEditor(typeof(GetDebugCommand), true), Serializable]
-public class GetCommandEditor :Editor
+public class GetCommandEditor : Editor
 {
-    private int amountOfParameters;
-    private List<string> names1, methodsName1;
-    private int selectedScript1,selectedMethod;
+    private string commandId;
+    private string commandDescription;
+    private string commandFormat;
+
+    private int parameterNum;
     private string type;
+
     private MonoBehaviour[] scripts;
-    private string id;
-    private string format;
-    private string description;
-    private int elected;
-
     private MethodInfo[] infos;
-    // Start is called before the first frame update
-    void OnEnable()
-    {
-        id = serializedObject.FindProperty("id").stringValue;
-        format = serializedObject.FindProperty("format").stringValue;
-        description = serializedObject.FindProperty("description").stringValue;
 
+    private List<string> scriptNames, functionNames;
+    private int selectedScript, selectedFunction;
+
+    private void OnEnable()
+    {
+        commandId = serializedObject.FindProperty("commandId").stringValue;
+        commandFormat = serializedObject.FindProperty("commandFormat").stringValue;
+        commandDescription = serializedObject.FindProperty("commandDescription").stringValue;
+
+        parameterNum = serializedObject.FindProperty("parameterNum").intValue;
+        type = serializedObject.FindProperty("type").stringValue;
 
         scripts = ((GetDebugCommand)target).gameObject.GetComponents<MonoBehaviour>();
-        amountOfParameters = serializedObject.FindProperty("amountOfParameters").intValue;
 
-        
-        type = serializedObject.FindProperty("type1").stringValue;
-
-  
-        names1 = new List<string>(scripts.Length + 1);
-        names1.Add("None");
+        scriptNames = new List<string>(scripts.Length + 1) { "None" };
 
         for (int i = 1; i < scripts.Length + 1; i++)
         {
             if (target != scripts[i - 1])
             {
-                names1.Add(scripts[i - 1].GetType().Name);
+                scriptNames.Add(scripts[i - 1].GetType().Name);
             }
         }
 
         if (serializedObject.FindProperty("script").objectReferenceValue != null)
         {
-            selectedScript1 = names1.IndexOf(((MonoBehaviour)serializedObject.FindProperty("script").objectReferenceValue).GetType().Name);
-            if (selectedScript1 == -1)
-                selectedScript1 = 0;
+            selectedScript = scriptNames.IndexOf(((MonoBehaviour)serializedObject.FindProperty("script").objectReferenceValue).GetType().Name);
+            if (selectedScript == -1) selectedScript = 0;
         }
         else
         {
-            selectedScript1 = 0;
+            selectedScript = 0;
         }
 
-        if (serializedObject.FindProperty("methodName").stringValue != "")
+        if (serializedObject.FindProperty("functionName").stringValue != "")
         {
-            methodsName1 = ((MonoBehaviour)serializedObject.FindProperty("script").objectReferenceValue).GetType().
-                GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).
-                    Where(m => m.ReturnType == typeof(void) && (m.GetParameters().Length < 0 || (m.GetParameters().Length > 0 &&
-                    (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool)))
-                     || (m.GetParameters().Length > 1 &&
-                     (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool))
-                     && m.GetParameters()[0].ParameterType == m.GetParameters()[1].ParameterType))).
-                        Select(m => m.Name + "()").ToList();
+            functionNames = ((MonoBehaviour)serializedObject.FindProperty("script").objectReferenceValue).GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).
+                Where(m => m.ReturnType == typeof(void) && (m.GetParameters().Length < 0 || (m.GetParameters().Length > 0 &&
+                (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(double) ||
+                m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool))) ||
+                (m.GetParameters().Length > 1 && (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(double) ||
+                m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool)) &&
+                m.GetParameters()[0].ParameterType == m.GetParameters()[1].ParameterType))).Select(m => m.Name + "()").ToList();
 
-            selectedMethod = methodsName1.IndexOf(serializedObject.FindProperty("methodName").stringValue + "()");
+            selectedFunction = functionNames.IndexOf(serializedObject.FindProperty("functionName").stringValue + "()");
         }
-
     }
 
-    // Update is called once per frame
     public override VisualElement CreateInspectorGUI()
     {
         return base.CreateInspectorGUI();
@@ -85,99 +76,82 @@ public class GetCommandEditor :Editor
     {
         serializedObject.Update();
 
-        id = EditorGUILayout.TextField("Id", id);
-        serializedObject.FindProperty("id").stringValue = id;
+        commandId = EditorGUILayout.TextField("Id", commandId);
+        serializedObject.FindProperty("commandId").stringValue = commandId;
 
-        format = EditorGUILayout.TextField("Format", format);
-        serializedObject.FindProperty("format").stringValue = format;
+        commandDescription = EditorGUILayout.TextField("Description", commandDescription);
+        serializedObject.FindProperty("commandDescription").stringValue = commandDescription;
 
-        description = EditorGUILayout.TextField("Description", description);
-        serializedObject.FindProperty("description").stringValue = description;
-
+        commandFormat = EditorGUILayout.TextField("Format", commandFormat);
+        serializedObject.FindProperty("commandFormat").stringValue = commandFormat;
 
         EditorGUI.BeginChangeCheck();
 
         EditorGUILayout.Space();
 
-        selectedScript1 = EditorGUILayout.Popup("Script", selectedScript1, names1.ToArray());
-        if (selectedScript1 == 0)
-        {
-            return;
-        }
+        selectedScript = EditorGUILayout.Popup("Script", selectedScript, scriptNames.ToArray());
+        if (selectedScript == 0) return;
 
-
-
-        var script = scripts[selectedScript1 - 1];
+        var script = scripts[selectedScript - 1];
         serializedObject.FindProperty("script").objectReferenceValue = script;
-
 
         if (EditorGUI.EndChangeCheck())
         {
-            selectedMethod = 0;
+            selectedFunction = 0;
 
+            functionNames = ((MonoBehaviour)serializedObject.FindProperty("script").objectReferenceValue).GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).
+                Where(m => m.ReturnType == typeof(void) && (m.GetParameters().Length < 0 || (m.GetParameters().Length > 0 &&
+                (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(double) ||
+                m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool))) ||
+                (m.GetParameters().Length > 1 && (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(double) ||
+                m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool)) &&
+                m.GetParameters()[0].ParameterType == m.GetParameters()[1].ParameterType))).Select(m => m.Name + "()").ToList();
 
-            methodsName1 = ((MonoBehaviour)serializedObject.FindProperty("script").objectReferenceValue).GetType().
-                GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).
-                    Where(m => m.ReturnType == typeof(void) 
-                    && (m.GetParameters().Length < 0 || (m.GetParameters().Length>0 && 
-                    (m.GetParameters()[0].ParameterType==typeof(int) || m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool)))
-                     || (m.GetParameters().Length > 1 && 
-                     (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool))
-                     && m.GetParameters()[0].ParameterType== m.GetParameters()[1].ParameterType))).
-                        Select(m => m.Name + "()").ToList();
-
-            infos = ((MonoBehaviour)serializedObject.FindProperty("script").objectReferenceValue).GetType().
-                GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).
-                    Where(m => m.ReturnType == typeof(void) && (m.GetParameters().Length < 0 || (m.GetParameters().Length > 0 &&
-                    (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool)))
-                     || (m.GetParameters().Length > 1 &&
-                     (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool))
-                     && m.GetParameters()[0].ParameterType == m.GetParameters()[1].ParameterType))).ToArray();
+            infos = ((MonoBehaviour)serializedObject.FindProperty("script").objectReferenceValue).GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).
+                Where(m => m.ReturnType == typeof(void) && (m.GetParameters().Length < 0 || (m.GetParameters().Length > 0 &&
+                (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(double) ||
+                m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool))) ||
+                (m.GetParameters().Length > 1 && (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(double) ||
+                m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool)) &&
+                m.GetParameters()[0].ParameterType == m.GetParameters()[1].ParameterType))).ToArray();
 
             if (infos.Length > 0)
             {
-                amountOfParameters = infos[selectedMethod].GetParameters().Length;
-                if (amountOfParameters > 0)
+                parameterNum = infos[selectedFunction].GetParameters().Length;
+                if (parameterNum > 0)
                 {
-                    type = infos[selectedMethod].GetParameters()[0].ParameterType.ToString();
-                    serializedObject.FindProperty("type1").stringValue = type;
+                    type = infos[selectedFunction].GetParameters()[0].ParameterType.ToString();
+                    serializedObject.FindProperty("type").stringValue = type;
                 }
-                serializedObject.FindProperty("amountOfParameters").intValue = amountOfParameters;
+                serializedObject.FindProperty("parameterNum").intValue = parameterNum;
             }
 
-            if (methodsName1.Count > 0)
-                ((GetDebugCommand)target).methodName = methodsName1[0];
-
-            
+            if (functionNames.Count > 0)
+                ((GetDebugCommand)target).functionName = functionNames[0];
         }
 
-       
         EditorGUI.BeginChangeCheck();
 
-        selectedMethod = EditorGUILayout.Popup("Method", selectedMethod, methodsName1.ToArray());
+        selectedFunction = EditorGUILayout.Popup("Function", selectedFunction, functionNames.ToArray());
 
         if (EditorGUI.EndChangeCheck())
         {
-            if (methodsName1.Count > 0)
+            if (functionNames.Count > 0)
             {
-                serializedObject.FindProperty("methodName").stringValue = methodsName1[selectedMethod].Substring(0, methodsName1[selectedMethod].Length - 2);
+                serializedObject.FindProperty("functionName").stringValue = functionNames[selectedFunction].Substring(0, functionNames[selectedFunction].Length - 2);
                 if (infos.Length > 0)
                 {
-                    amountOfParameters = infos[selectedMethod].GetParameters().Length;
-                    if (amountOfParameters > 0)
+                    parameterNum = infos[selectedFunction].GetParameters().Length;
+                    if (parameterNum > 0)
                     {
-                        type = infos[selectedMethod].GetParameters()[0].ParameterType.ToString();
-                        serializedObject.FindProperty("type1").stringValue = type;
+                        type = infos[selectedFunction].GetParameters()[0].ParameterType.ToString();
+                        serializedObject.FindProperty("type").stringValue = type;
                     }
-                    serializedObject.FindProperty("amountOfParameters").intValue = amountOfParameters;
+                    serializedObject.FindProperty("parameterNum").intValue = parameterNum;
                 }
-
             }
         }
-        
 
         serializedObject.ApplyModifiedProperties();
     }
 }
-
-

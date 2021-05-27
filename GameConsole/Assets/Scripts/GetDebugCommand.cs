@@ -5,95 +5,102 @@ using System;
 
 public class GetDebugCommand : MonoBehaviour
 {
-
-    public string id;
-    public string format;
-    public string description;
+    public string commandId;
+    public string commandDescription;
+    public string commandFormat;
 
     [HideInInspector]
-    public int amountOfParameters;
+    public int parameterNum;
+
     [HideInInspector]
     public MonoBehaviour script;
     [HideInInspector]
-    public string  methodName, type1;
+    public string functionName, type;
 
-
-
-
-
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-
-        if (!string.IsNullOrEmpty(methodName))
+        if (!string.IsNullOrEmpty(functionName))
         {
-            if (amountOfParameters == 0)
+            if (parameterNum == 0)
             {
-                DebugCommand SPAWN_CUBE = new DebugCommand(id, description, format, () =>
+                DebugCommand COMMAND = new DebugCommand(commandId, commandDescription, commandFormat, () =>
                 {
-                    script.GetType().GetMethod(methodName)?.Invoke(script,null);
+                    script.GetType().GetMethod(functionName)?.Invoke(script, null);
                 });
-                DebugConsole.Instance.AddCommand(SPAWN_CUBE);
+                DebugConsole.Instance.AddCommand(COMMAND);
             }
-            if (amountOfParameters == 1)
+            else if (parameterNum == 1)
             {
-                Type type = Type.GetType (type1);
-                if (type == typeof(float))
+                Type aux = Type.GetType(type);
+                if (aux == typeof(int))
                 {
-                    DebugCommand<float> SPAWN_CUBE = new DebugCommand<float>(id, description, format, (x) =>
+                    DebugCommand<int> COMMAND = new DebugCommand<int>(commandId, commandDescription, commandFormat, (x) =>
                     {
-                        script.GetType().GetMethod(methodName)?.Invoke(script, new object[1] { x });
+                        script.GetType().GetMethod(functionName)?.Invoke(script, new object[1] { x });
                     });
-                    DebugConsole.Instance.AddCommand(SPAWN_CUBE);
+                    DebugConsole.Instance.AddCommand(COMMAND);
                 }
-                else if(type== typeof(int))
+                else if (aux == typeof(double))
                 {
-                    DebugCommand<int> SPAWN_CUBE = new DebugCommand<int>(id, description, format, (x) =>
+                    DebugCommand<double> COMMAND = new DebugCommand<double>(commandId, commandDescription, commandFormat, (x) =>
                     {
-                        script.GetType().GetMethod(methodName)?.Invoke(script, new object[1] { x });
+                        script.GetType().GetMethod(functionName)?.Invoke(script, new object[1] { x });
                     });
-                    DebugConsole.Instance.AddCommand(SPAWN_CUBE);
+                    DebugConsole.Instance.AddCommand(COMMAND);
                 }
-                else if(type==typeof(bool))
+                else if (aux == typeof(float))
                 {
-                    DebugCommand<bool> SPAWN_CUBE = new DebugCommand<bool>(id, description, format, (x) =>
+                    DebugCommand<float> COMMAND = new DebugCommand<float>(commandId, commandDescription, commandFormat, (x) =>
                     {
-                        script.GetType().GetMethod(methodName)?.Invoke(script, new object[1] { x });
+                        script.GetType().GetMethod(functionName)?.Invoke(script, new object[1] { x });
                     });
-                    DebugConsole.Instance.AddCommand(SPAWN_CUBE);
+                    DebugConsole.Instance.AddCommand(COMMAND);
                 }
-               
+                else if (aux == typeof(bool))
+                {
+                    DebugCommand<bool> COMMAND = new DebugCommand<bool>(commandId, commandDescription, commandFormat, (x) =>
+                    {
+                        script.GetType().GetMethod(functionName)?.Invoke(script, new object[1] { x });
+                    });
+                    DebugConsole.Instance.AddCommand(COMMAND);
+                }
             }
             else
             {
-                Type type = Type.GetType(type1);
-                if (type == typeof(float))
+                Type aux = Type.GetType(type);
+                if (aux == typeof(int))
                 {
-                    DebugCommand<float, float> SPAWN_CUBE = new DebugCommand<float, float>(id, description, format, (x, y) =>
-                     {
-                         script.GetType().GetMethod(methodName)?.Invoke(script, new object[2] { x, y });
-                     });
-                    DebugConsole.Instance.AddCommand(SPAWN_CUBE);
-                }
-                else if (type == typeof(int))
-                {
-                    DebugCommand<int, int> SPAWN_CUBE = new DebugCommand<int, int>(id, description, format, (x, y) =>
+                    DebugCommand<int, int> COMMAND = new DebugCommand<int, int>(commandId, commandDescription, commandFormat, (x, y) =>
                     {
-                        script.GetType().GetMethod(methodName)?.Invoke(script, new object[2] { x, y });
+                        script.GetType().GetMethod(functionName)?.Invoke(script, new object[2] { x, y });
                     });
-                    DebugConsole.Instance.AddCommand(SPAWN_CUBE);
+                    DebugConsole.Instance.AddCommand(COMMAND);
                 }
-                else if (type == typeof(bool))
+                else if (aux == typeof(double))
                 {
-                    DebugCommand<bool, bool> SPAWN_CUBE = new DebugCommand<bool, bool>(id, description, format, (x, y) =>
+                    DebugCommand<double, double> COMMAND = new DebugCommand<double, double>(commandId, commandDescription, commandFormat, (x, y) =>
                     {
-                        script.GetType().GetMethod(methodName)?.Invoke(script, new object[2] { x, y });
+                        script.GetType().GetMethod(functionName)?.Invoke(script, new object[2] { x, y });
                     });
-                    DebugConsole.Instance.AddCommand(SPAWN_CUBE);
+                    DebugConsole.Instance.AddCommand(COMMAND);
+                }
+                else if (aux == typeof(float))
+                {
+                    DebugCommand<float, float> COMMAND = new DebugCommand<float, float>(commandId, commandDescription, commandFormat, (x, y) =>
+                    {
+                        script.GetType().GetMethod(functionName)?.Invoke(script, new object[2] { x, y });
+                    });
+                    DebugConsole.Instance.AddCommand(COMMAND);
+                }
+                else if (aux == typeof(bool))
+                {
+                    DebugCommand<bool, bool> COMMAND = new DebugCommand<bool, bool>(commandId, commandDescription, commandFormat, (x, y) =>
+                    {
+                        script.GetType().GetMethod(functionName)?.Invoke(script, new object[2] { x, y });
+                    });
+                    DebugConsole.Instance.AddCommand(COMMAND);
                 }
             }
         }
     }
 }
-
-  
