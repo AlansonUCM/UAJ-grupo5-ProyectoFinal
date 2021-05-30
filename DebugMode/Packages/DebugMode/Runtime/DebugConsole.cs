@@ -6,10 +6,12 @@ using UnityEngine.SceneManagement;
 public class DebugConsole : MonoBehaviour
 {
     public static DebugConsole Instance;
-    public KeyCode key;
 
     [SerializeField]
     private DebugPanel panel;
+
+    public KeyCode key;
+    public int fontSize = 20;
 
     private bool showConsole;
     private bool showHelp;
@@ -122,18 +124,18 @@ public class DebugConsole : MonoBehaviour
         }
     }
 
-    private void ScrollBox(float y, bool help)
+    private void ScrollBox(float y, bool help, GUIStyle style)
     {
-        Rect viweport = new Rect(0, 0, Screen.width - 30, 20 * ((help) ? commandList.Count : panel.infoList.Count));
+        Rect viweport = new Rect(0, 0, Screen.width - (fontSize + 10), (fontSize + 10) * (help ? commandList.Count : panel.infoList.Count));
 
-        scroll = GUI.BeginScrollView(new Rect(0, y + 5, Screen.width, 90), scroll, viweport);
+        scroll = GUI.BeginScrollView(new Rect(0, y, Screen.width, Screen.height / 6), scroll, viweport);
 
         for (int i = 0; i < ((help) ? commandList.Count : panel.infoList.Count); i++)
         {
-            string label = (help) ? $"{commandList[i].GetCommandFormat()} - {commandList[i].GetCommandDescription()}" : $"{panel.infoList[i].GetInfoDescription()}";
+            string label = help ? $"{commandList[i].GetCommandFormat()} - {commandList[i].GetCommandDescription()}" : $"{panel.infoList[i].GetInfoId()} : {panel.infoList[i].GetInfoDescription()}";
 
-            Rect labelRect = new Rect(5, 20 * i, viweport.width - 100, 20);
-            GUI.Label(labelRect, label);
+            Rect labelRect = new Rect(10, 5 + (fontSize + 10) * i, viweport.width - Screen.height / 6, fontSize + 10);
+            GUI.Label(labelRect, label, style);
         }
     }
 
@@ -172,6 +174,11 @@ public class DebugConsole : MonoBehaviour
         }
     }
 
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Instance.Init();
+    }
+
     private void Awake()
     {
         if (Instance == null)
@@ -185,6 +192,16 @@ public class DebugConsole : MonoBehaviour
         Destroy(gameObject);
     }
 
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(key))
@@ -195,30 +212,33 @@ public class DebugConsole : MonoBehaviour
     {
         if (!showConsole) return;
 
+        GUIStyle style = new GUIStyle();
+        style.normal.textColor = new Color(1, 1, 1);
+        style.fontSize = fontSize;
+
         Event e = Event.current;
-        if (e.keyCode == KeyCode.Return)
-            OnReturn();
+        if (e.keyCode == KeyCode.Return) OnReturn();
 
         float y = 0;
 
         if (showHelp || showInfo)
         {
-            GUI.Box(new Rect(0, y, Screen.width, 100), "");
+            GUI.Box(new Rect(0, y, Screen.width, Screen.height / 6), "");
 
-            ScrollBox(y, showHelp);
+            ScrollBox(y, showHelp, style);
 
             GUI.EndScrollView();
-            y += 100;
+            y += Screen.height / 6;
         }
 
-        GUI.Box(new Rect(0, y, Screen.width, 30), "");
+        GUI.Box(new Rect(0, y, Screen.width, fontSize + 10), "");
         GUI.backgroundColor = new Color(0, 0, 0);
 
         int length = 0;
         string oldString = input;
         if (oldString != null) length = oldString.Length;
-        input = GUI.TextField(new Rect(10, y + 5, Screen.width - 20, 20), input);
-        y += 30;
+        input = GUI.TextField(new Rect(10, y + 5, Screen.width - (fontSize + 10), fontSize + 10), input, style);
+        y += fontSize + 10;
 
         if (!string.IsNullOrEmpty(input))
         {
@@ -230,16 +250,16 @@ public class DebugConsole : MonoBehaviour
 
             if (commandFoundList != null && commandFoundList.Count > 0)
             {
-                GUI.Box(new Rect(0, y, Screen.width, commandFoundList.Count * 20), "");
+                GUI.Box(new Rect(0, y, Screen.width, commandFoundList.Count * (fontSize + 10)), "");
 
                 for (int i = 0; i < commandFoundList.Count; i++)
                 {
                     string label = commandFoundList[i];
-                    Rect labelRect = new Rect(5, y + (20 * i), Screen.width - 20, 20);
-                    GUI.Label(labelRect, label);
+                    Rect labelRect = new Rect(10, y + (fontSize + 10) * i, Screen.width - (fontSize + 10), fontSize + 10);
+                    GUI.Label(labelRect, label, style);
                 }
 
-                GUI.Box(new Rect(0, y + 20 * commandSelected, Screen.width, 20), "");
+                GUI.Box(new Rect(0, y + (fontSize + 10) * commandSelected, Screen.width, fontSize + 10), "");
 
                 if (e.keyCode == KeyCode.Tab)
                     input = commandFoundList[commandSelected];
@@ -249,7 +269,7 @@ public class DebugConsole : MonoBehaviour
                 else if (e.type == EventType.Used && e.keyCode == KeyCode.UpArrow)
                     commandSelected = (commandSelected - 1) > 0 ? commandSelected - 1 : 0;
 
-                y += commandFoundList.Count * 20;
+                y += commandFoundList.Count * (fontSize + 10);
             }
         }
     }

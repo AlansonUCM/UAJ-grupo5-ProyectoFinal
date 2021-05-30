@@ -22,6 +22,7 @@ public class Throw : MonoBehaviour
     private bool thrown = false;
     private bool stopped = false;
     private bool playingSound = false;
+    private bool infinite = false;
 
     [SerializeField] private float forceMultiplier = 10.0f;
 
@@ -62,7 +63,7 @@ public class Throw : MonoBehaviour
         {
             throwable = InternalThrow(throwablePrefab);
             playerHealth.SetThrowable(throwable);
-            thrown = true;
+            if (!infinite) thrown = true;
             orb.gameObject.SetActive(false);
             aimTarget.SetActive(false);
 
@@ -179,9 +180,24 @@ public class Throw : MonoBehaviour
         return ThrowObject(prefab, force);
     }
 
+    public void SetForceMultiplayer(float value)
+    {
+        forceMultiplier = value;
+    }
+
+    public void InfiniteOrbs()
+    {
+        infinite = !infinite;
+    }
+
     public void ChargeUp()
     {
         thrown = false;
+    }
+
+    public bool WasThrown()
+    {
+        return thrown;
     }
 
     public void StopCasting()

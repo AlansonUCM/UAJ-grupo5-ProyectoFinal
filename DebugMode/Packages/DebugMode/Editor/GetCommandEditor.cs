@@ -56,7 +56,7 @@ public class GetCommandEditor : Editor
         if (serializedObject.FindProperty("functionName").stringValue != "")
         {
             functionNames = ((MonoBehaviour)serializedObject.FindProperty("script").objectReferenceValue).GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).
-                Where(m => m.ReturnType == typeof(void) && (m.GetParameters().Length < 0 || (m.GetParameters().Length > 0 &&
+                Where(m => m.ReturnType == typeof(void) && (m.GetParameters().Length == 0 || (m.GetParameters().Length > 0 &&
                 (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(double) ||
                 m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool))) ||
                 (m.GetParameters().Length > 1 && (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(double) ||
@@ -100,7 +100,7 @@ public class GetCommandEditor : Editor
             selectedFunction = 0;
 
             functionNames = ((MonoBehaviour)serializedObject.FindProperty("script").objectReferenceValue).GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).
-                Where(m => m.ReturnType == typeof(void) && (m.GetParameters().Length < 0 || (m.GetParameters().Length > 0 &&
+                Where(m => m.ReturnType == typeof(void) && (m.GetParameters().Length == 0 || (m.GetParameters().Length > 0 &&
                 (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(double) ||
                 m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool))) ||
                 (m.GetParameters().Length > 1 && (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(double) ||
@@ -108,7 +108,7 @@ public class GetCommandEditor : Editor
                 m.GetParameters()[0].ParameterType == m.GetParameters()[1].ParameterType))).Select(m => m.Name + "()").ToList();
 
             infos = ((MonoBehaviour)serializedObject.FindProperty("script").objectReferenceValue).GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).
-                Where(m => m.ReturnType == typeof(void) && (m.GetParameters().Length < 0 || (m.GetParameters().Length > 0 &&
+                Where(m => m.ReturnType == typeof(void) && (m.GetParameters().Length == 0 || (m.GetParameters().Length > 0 &&
                 (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(double) ||
                 m.GetParameters()[0].ParameterType == typeof(float) || m.GetParameters()[0].ParameterType == typeof(bool))) ||
                 (m.GetParameters().Length > 1 && (m.GetParameters()[0].ParameterType == typeof(int) || m.GetParameters()[0].ParameterType == typeof(double) ||

@@ -92,9 +92,20 @@ public class GameManager : MonoBehaviour
         deathManager.PlayerDeath(numDeaths);
     }
 
+    public void ResetNumDeaths()
+    {
+        numDeaths = 0;
+        deathManager.PlayerDeath(numDeaths);
+    }
+
     public int GetNumDeaths()
     {
         return numDeaths;
+    }
+
+    public void ResetTime()
+    {
+        time = 0;
     }
 
     public float GetRunTime()

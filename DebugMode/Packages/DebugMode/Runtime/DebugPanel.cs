@@ -10,6 +10,8 @@ public class DebugPanel : MonoBehaviour
     [SerializeField]
     private DebugConsole console;
 
+    public int fontSize = 20;
+
     private Vector2 scroll;
 
     public List<DebugInfoBase> infoList;
@@ -48,6 +50,11 @@ public class DebugPanel : MonoBehaviour
         };
     }
 
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Instance.Init();
+    }
+
     private void Awake()
     {
         if (Instance == null)
@@ -61,6 +68,16 @@ public class DebugPanel : MonoBehaviour
         Destroy(gameObject);
     }
 
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
     private void Update()
     {
         deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
@@ -71,11 +88,15 @@ public class DebugPanel : MonoBehaviour
     {
         if (!console || !console.IsConsoleShowing()) return;
 
-        GUI.Box(new Rect(0, Screen.height - 100, 230, 100), "");
+        GUIStyle style = new GUIStyle();
+        style.normal.textColor = new Color(1, 1, 1);
+        style.fontSize = fontSize;
 
-        Rect viweport = new Rect(0, Screen.height - 100, 230 - 30, 20 * infoList.Count);
+        GUI.Box(new Rect(Screen.width * 2 / 3, Screen.height * 2 / 3, Screen.width / 3, Screen.height / 3), "");
 
-        scroll = GUI.BeginScrollView(new Rect(0, Screen.height - 100 + 5, 230, 90), scroll, viweport);
+        Rect viweport = new Rect(Screen.width * 2 / 3, Screen.height * 2 / 3, Screen.width / 3 - (fontSize + 10), (fontSize + 10) * infoList.Count);
+
+        scroll = GUI.BeginScrollView(new Rect(Screen.width * 2 / 3, Screen.height * 2 / 3, Screen.width / 3, Screen.height / 3), scroll, viweport);
 
         for (int i = 0; i < infoList.Count; i++)
         {
@@ -132,8 +153,8 @@ public class DebugPanel : MonoBehaviour
                 label = $"{label} : {help} , {help2}";
             }
 
-            Rect labelRect = new Rect(5, Screen.height - 100 + 20 * i, 230, 20);
-            GUI.Label(labelRect, label);
+            Rect labelRect = new Rect(Screen.width * 2 / 3 + 10, Screen.height * 2 / 3 + (5 + (fontSize + 10) * i), Screen.width / 3, fontSize + 10);
+            GUI.Label(labelRect, label, style);
         }
 
         GUI.EndScrollView();

@@ -176,4 +176,9 @@ public class Movement : MonoBehaviour
     {
         return deceleration;
     }
+
+    public Vector2 GetPosition()
+    {
+        return transform.position;
+    }
 }

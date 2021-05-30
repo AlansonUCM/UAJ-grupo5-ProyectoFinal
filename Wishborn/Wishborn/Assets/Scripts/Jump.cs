@@ -65,6 +65,11 @@ public class Jump : MonoBehaviour
         }
     }
 
+    public void SetJumpSpeed(float speed)
+    {
+        jumpSpeed = speed;
+    }
+
     public void SetGravityScaleForTTime(float scale, float time)
     {
         StartCoroutine(InternalSetGravityScaleForTTime(scale, time));

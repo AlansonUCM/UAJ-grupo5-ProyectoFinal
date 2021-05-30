@@ -9,6 +9,7 @@ public class Health : MonoBehaviour
     private Throwable throwable;
     private bool alive = true;
     private bool revived = true;
+    private bool godMode = false;
 
     private Vector2 respanwPosition;
     private Vector2 bossOffset = new Vector2(10.0f, 7.5f);
@@ -47,6 +48,8 @@ public class Health : MonoBehaviour
 
     public void Die()
     {
+        if (godMode) return;
+
         GameManager.Instance.SetInputFreeze(true);
         GameManager.Instance.PlayerDeath();
         gameObject.layer = LayerMask.NameToLayer("PlayerDead");
@@ -89,6 +92,33 @@ public class Health : MonoBehaviour
         alive = true;
         transform.position = respanwPosition;
         revived = true;
+    }
+
+    public void GodMode()
+    {
+        godMode = !godMode;
+    }
+
+    public void Kill()
+    {
+        if (godMode)
+        {
+            GodMode();
+            Die();
+            GodMode();
+        }
+        else
+            Die();
+    }
+
+    public void RestetDeaths()
+    {
+        GameManager.Instance.ResetNumDeaths();
+    }
+
+    public void ResetTime()
+    {
+        GameManager.Instance.ResetTime();
     }
 
     public bool IsAlive()
