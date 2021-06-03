@@ -153,7 +153,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c31fb6e00b5944e4bb1125e4890c7030, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  console: {fileID: 826099765}
+  key: 293
+  fontSize: 20
 --- !u!114 &826099765
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,7 +168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   key: 293
-  panel: {fileID: 826099764}
+  fontSize: 20
 --- !u!4 &826099766
 Transform:
   m_ObjectHideFlags: 0
