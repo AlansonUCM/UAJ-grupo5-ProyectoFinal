@@ -61,7 +61,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4c763e3b8f035146a1f1f66b39f4ec8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panel: {fileID: 2869711682403578176}
   key: 293
   fontSize: 20
 --- !u!114 &2869711682403578176
@@ -76,5 +75,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c31fb6e00b5944e4bb1125e4890c7030, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  console: {fileID: 6087837387337329331}
+  key: 293
   fontSize: 20
